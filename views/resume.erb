@@ -1,0 +1,114 @@
+<html>
+<head>
+    <title><%= @profile.first_name %> <%= @profile.last_name %>, Resume</title>
+    <style>
+        * {font-family:sans-serif; margin:10px 0; line-height:26px; font-size:16px;}
+        hr {margin:30px 0;}
+        h1 {font-size:26px;}
+        h2 {font-size:22px; font-weight:normal; margin-top:20px;}
+        h2, .experience {color:#666;}
+        h3 {margin-top:20px;}
+        li, a {margin:5px 0;}
+    </style>
+</head>
+<body>
+
+<h1><%= @profile.first_name %> <%= @profile.last_name %></h1>
+<p><%= @profile.headline %></p>
+<ul>
+    <li>Email: <a href="mailto:<%= @profile.email %>"><%= @profile.email %></a></li>
+    <% if @profile.member_url_resources.all %>
+    <% @profile.member_url_resources.all.each do |link| %>
+    <li><%= link.name %>: <a href="<%= link.url %>"><%= link.url %></a></li>
+    <% end %>
+    <% end %>
+    <% if @profile.twitter_accounts %>
+    <% @profile.twitter_accounts.all.each do |twitter_account| %>
+    <li>Twitter: <a href="http://twitter.com/<%= twitter_account.provider_account_name %>"
+        >http://twitter.com/<%= twitter_account.provider_account_name %></a></li>
+    <% end %>
+    <% end %>
+</ul>
+
+<% if @profile.summary %>
+<hr>
+<h2>Overview</h2>
+<%== erubis :section, :locals => {:data => @profile.summary} %>
+<% end %>
+
+<% specialties = @profile.specialties && !@profile.specialties.strip.empty? %>
+<% if specialties || @profile.skills %>
+<hr>
+<% end %>
+
+<% if specialties %>
+<h2>Specialties</h2>
+<%== erubis :section, :locals => {:data => @profile.specialties} %>
+<% end %>
+
+<% if @profile.skills %>
+<h2>Skills</h2>
+<p><%= @profile.skills.all.map{ |skill| skill.skill.name }.join(", ") %></p>
+<% end %>
+
+<% if @profile.positions.all %>
+<% summaries = @profile.positions.all.map{ |position| position.summary } %>
+<hr>
+<h2>Experience</h2>
+<% @profile.positions.all.each do |position| %>
+<h3><%= position.title %> at <%= position.company.name %></h3>
+<p><%= dates position %></p>
+<% if position.summary %>
+<span class="experience">
+<%== erubis :section, :locals => {:data => position.summary, :near_items => summaries} %>
+</span>
+<% end %>
+<% end %>
+<% end %>
+
+<% honors = @profile.honors && !@profile.honors.strip.empty? %>
+<% if @profile.educations.all || honors %>
+<hr>
+<% end %>
+
+<% if @profile.educations.all %>
+<h2>Education</h2>
+<ul>
+<% @profile.educations.all.each do |education| %>
+<li>
+    <% fields = %w(activities, field_of_study, degree, school_name) %>
+    <%= fields.map{ |f| education.send f}.reject{ |f| f.nil? }.join(", ") %>,
+    <%= dates education %>
+</li>
+<% end %>
+</ul>
+<% end %>
+
+<% if honors %>
+<h2>Honors and Awards</h2>
+<ul>
+<% @profile.honors.split("\n").select{ |honor| honor.strip.size > 0 }.each do |honor| %>
+<li><%= honor %></li>
+<% end %>
+</ul>
+<% end %>
+
+<% if @profile.recommendations_received.all %>
+<hr>
+<h2>Recommendations</h2>
+<% @profile.recommendations_received.all.each do |recommendation| %>
+<cite><%= recommendation.recommendation_text %></cite>
+<p>
+    - <b><%= recommendation.recommender.first_name %> <%= recommendation.recommender.last_name %></b>,
+    <% case recommendation.recommendation_type.code %>
+    <% when "service-provider" %>
+        was <%= @profile.first_name %>'s client
+    <% when "colleague" %>
+        worked directly with <%= @profile.first_name %>
+    <% end %>
+</p>
+<% end %>
+<% end %>
+
+</body>
+</html>

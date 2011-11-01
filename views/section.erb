@@ -1,0 +1,13 @@
+<% sections(data, near_items ||= []).each do |section| %>
+
+<% if section.is_a? Array %>
+<ul>
+    <% section.each do |point| %>
+    <li><%= point %></li>
+    <% end %>
+</ul>
+<% else %>
+<p><%== section %></p>
+<% end %>
+
+<% end %>
