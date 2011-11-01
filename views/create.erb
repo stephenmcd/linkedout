@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<title>Linked Out</title>
+<meta name="description" content="Convert LinkedIn profiles into beautiful PDF resumes.">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+<script>
+
+$(function() {
+
+    var profiles = {};
+    var select = $('#profiles');
+
+    $.each(<%== @profiles.to_json %>, function() {
+        if (this.id != 'private') {
+            this.name = this.first_name + ' ' + this.last_name;
+            this.picture_url = this.picture_url || '/img/no_photo.png';
+            select.append($('<option>').val(this.id).text(this.name));
+            profiles[this.id] = this;
+        }
+    });
+
+    select.change(function() {
+        var template = $('#profile-template').tmpl(profiles[this.value]);
+        $('#profile').html(template);
+    });
+
+    select.val('<%= @profile.id %>').change();
+
+});
+
+</script>
+<style>
+    #profiles, #profile {margin:10px;}
+    #profile * {margin:0;}
+    #profile img {float:left; width:80px; height:80px; margin-right:10px;}
+</style>
+</head>
+
+<body>
+
+<form method="post">
+    <select name="id" id="profiles"></select>
+    <script id="profile-template" type="text/x-jquery-tmpl">
+        <img src="${picture_url}">
+        <h1>${name}</h1>
+        <p>${headline}</p>
+    </script>
+    <div id="profile"></div>
+    <label for="email">Email:</label>
+    <input name="email" id="email">
+    <input type="submit" value="Create resume">
+</form>
+
+</body>
+</html>

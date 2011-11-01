@@ -8,19 +8,22 @@ require "./models"
 require "./helpers"
 #require "ruby-debug/debugger"
 
-profile_fields = %w(first-name last-name headline twitter-accounts
+
+own_fields = %w(id first-name last-name headline picture-url)
+
+resume_fields = %w(first-name last-name headline twitter-accounts
                     member-url-resources site-public-profile-request
                     summary specialties skills positions educations
                     honors recommendations-received)
 
 set :erubis, :escape_html => true
 enable :sessions
-use PDFKit::Middleware
-PDFKit.configure do |config|
-  wkhtmltopdf_path = File.join(File.dirname(__FILE__), "bin/wkhtmltopdf-amd64")
-  config.wkhtmltopdf = wkhtmltopdf_path if ENV["RACK_ENV"] == "production"
-  config.default_options = {:page_size => "A4"}
-end
+#use PDFKit::Middleware
+#PDFKit.configure do |config|
+#  wkhtmltopdf_path = File.join(File.dirname(__FILE__), "bin/wkhtmltopdf-amd64")
+#  config.wkhtmltopdf = wkhtmltopdf_path if ENV["RACK_ENV"] == "production"
+#  config.default_options = {:page_size => "A4"}
+#end
 
 api_key = ApiKey.first
 
@@ -28,6 +31,7 @@ before do
   @client = LinkedIn::Client.new(api_key.token, api_key.secret)
   unless session[:auth].nil?
     @client.authorize_from_access *session[:auth]
+    @profile = @client.profile :fields => own_fields
   end
 end
 
@@ -38,7 +42,7 @@ get "/" do
     session[:request] = request_token.token, request_token.secret
     redirect @client.request_token.authorize_url
   else
-    redirect "/resume.pdf"
+    redirect "/create"
   end
 end
 
@@ -46,11 +50,20 @@ get "/callback" do
   token, secret = session[:request]
   pin = params[:oauth_verifier]
   session[:auth] = @client.authorize_from_request token, secret, pin
-  redirect "/resume"
+  redirect "/create"
 end
 
-get "/resume.pdf" do
-  @profile = @client.profile :fields => profile_fields
-  @profile.email = "steve@jupo.org"
-  erubis :resume
+get "/create" do
+  @profiles = (@client.connections.all + [@profile]).sort_by {|p|
+    p.first_name.upcase
+  }
+  erubis :create
+end
+
+post "/create" do
+  @resume = Resume.first_or_create(:by => @profile.id, :for => params[:id])
+  @resume.update(:email => params[:email])
+  @profile = @client.profile :id => params[:id], :fields => resume_fields
+  attachment @profile.first_name + @profile.last_name + ".pdf"
+  PDFKit.new(erubis :resume, :page_size => "A4").to_pdf
 end
