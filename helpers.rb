@@ -1,3 +1,4 @@
+# encoding: UTF-8
 
 helpers do
   # Splits the given data into sections where each section is either
@@ -6,7 +7,7 @@ helpers do
   # and are used to treat the data like bullet points if most of the
   # other items are bullet points.
   def sections(data, near_items)
-    bullets = /^(\*|-|\xc2\xb7)/
+    bullets = /^(\*|-|–|—|·|•)/
     most_near_are_points = most_near_are_points? near_items
     (data || "").split("\n\n").map {|section|
       points = section.split("\n").map{ |point| point.strip }
