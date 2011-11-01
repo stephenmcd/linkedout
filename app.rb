@@ -18,14 +18,13 @@ resume_fields = %w(first-name last-name headline twitter-accounts
 
 set :erubis, :escape_html => true
 enable :sessions
-#use PDFKit::Middleware
-#PDFKit.configure do |config|
-#  wkhtmltopdf_path = File.join(File.dirname(__FILE__), "bin/wkhtmltopdf-amd64")
-#  config.wkhtmltopdf = wkhtmltopdf_path if ENV["RACK_ENV"] == "production"
-#  config.default_options = {:page_size => "A4"}
-#end
-
 api_key = ApiKey.first
+
+PDFKit.configure do |config|
+  wkhtmltopdf_path = File.join(File.dirname(__FILE__), "bin/wkhtmltopdf-amd64")
+  config.wkhtmltopdf = wkhtmltopdf_path if ENV["RACK_ENV"] == "production"
+  config.default_options = {:page_size => "A4"}
+end
 
 before do
   @client = LinkedIn::Client.new(api_key.token, api_key.secret)
@@ -65,5 +64,5 @@ post "/create" do
   @resume.update(:email => params[:email])
   @profile = @client.profile :id => params[:id], :fields => resume_fields
   attachment @profile.first_name + @profile.last_name + ".pdf"
-  PDFKit.new(erubis :resume, :page_size => "A4").to_pdf
+  PDFKit.new(erubis :resume).to_pdf
 end
