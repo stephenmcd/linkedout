@@ -1,4 +1,3 @@
-
 require "rubygems"
 require "sinatra"
 require "linkedin"
@@ -8,24 +7,30 @@ require "./models"
 require "./helpers"
 #require "ruby-debug/debugger"
 
-
+# Profile fields to request for the authenticated user's own profile
+# when merging with connections.
 own_fields = %w(id first-name last-name headline picture-url)
 
+# All profile fields referenced when creating a resume.
 resume_fields = %w(first-name last-name headline twitter-accounts
-                    member-url-resources site-public-profile-request
-                    summary specialties skills positions educations
-                    honors recommendations-received)
+                   member-url-resources site-public-profile-request
+                   summary specialties skills positions educations
+                   honors recommendations-received)
 
+# Set up templating, session and LinkedIn API credentials.
 set :erubis, :escape_html => true
 enable :sessions
 api_key = ApiKey.first
 
+# PDFKit configuration. Use the bundled binary in production (Heroku).
 PDFKit.configure do |config|
   wkhtmltopdf_path = File.join(File.dirname(__FILE__), "bin/wkhtmltopdf-amd64")
   config.wkhtmltopdf = wkhtmltopdf_path if ENV["RACK_ENV"] == "production"
   config.default_options = {:page_size => "A4"}
 end
 
+# Create the LinkedIn client and profile objects for all routes when
+# authenticated.
 before do
   @client = LinkedIn::Client.new(api_key.token, api_key.secret)
   unless session[:auth].nil?
@@ -34,10 +39,14 @@ before do
   end
 end
 
+# If authenticated, show the resume creation form,
+# otherwise show the login page.
 get "/" do
   if session[:auth].nil?
     erubis :index
   else
+    # Add the authenticated user's own profiles to the list of
+    # connections.
     @profiles = (@client.connections.all + [@profile]).sort_by {|p|
       p.first_name.upcase
     }
@@ -45,6 +54,7 @@ get "/" do
   end
 end
 
+# Create a resume.
 post "/" do
   @resume = Resume.first_or_create(:by => @profile.id, :for => params[:id])
   @resume.update(:email => params[:email])
@@ -53,6 +63,7 @@ post "/" do
   PDFKit.new(erubis :resume).to_pdf
 end
 
+# Handles OAuth post and callback.
 get "/login" do
   if params[:oauth_verifier].nil?
     args = {:oauth_callback => "#{request.url}"}
