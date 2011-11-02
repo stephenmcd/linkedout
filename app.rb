@@ -62,7 +62,7 @@ post "/" do
   @resume.update(:email => params[:email])
   @profile = @client.profile :id => params[:id], :fields => resume_fields
   attachment @profile.first_name + @profile.last_name + ".pdf"
-  PDFKit.new(erubis :resume).to_pdf
+  PDFKit.new(erubis :resume, :layout => false).to_pdf
 end
 
 # Handles OAuth post and callback.

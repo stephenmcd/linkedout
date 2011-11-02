@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<title>LinkedOut</title>
+<meta name="description" content="Export LinkedIn profiles as clean PDF resumes.">
+<% if @profile %>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+<script>
+
+$(function() {
+
+    var profiles = {};
+    var select = $('#profiles');
+
+    $.each(<%== @profiles.to_json %>, function() {
+        if (this.id != 'private') {
+            this.name = this.first_name + ' ' + this.last_name;
+            this.picture_url = this.picture_url || '/img/no_photo.png';
+            select.append($('<option>').val(this.id).text(this.name));
+            profiles[this.id] = this;
+        }
+    });
+
+    var profile = function() {
+        var template = $('#profile-template').tmpl(profiles[this.value]);
+        $('#profile').html(template);
+    };
+
+    select.change(profile).keyup(profile);
+    select.val('<%= @profile.id %>').change();
+
+});
+
+</script>
+<% end %>
+<style>
+    body * {font-family:sans-serif;}
+    body {text-align:center; background:#eee;}
+    h1 {margin:0;}
+    form {margin:30px 0;}
+    #main {width:450px; margin:30px auto; padding:30px 40px; text-align:left;
+           background:#fff; border:1px solid #ccc; border-radius:10px;}
+    #profile * {margin:0;}
+    #profile {padding:10px; min-height:80px; margin:20px 0;
+              border:1px dashed #666;}
+    #profile img {float:left; width:80px; height:80px; margin-right:10px;
+                  border:1px solid #333;}
+    input {border:1px solid #999; padding:5px; width:200px;}
+    label {margin-right:5px;}
+    label, .button {font-weight:bold; cursor:pointer;}
+    .button {display:block; padding:10px 20px; margin-top:20px; width:auto;}
+</style>
+
+</head>
+<body>
+
+<div id="main">
+<h1>LinkedOut</h1>
+<%== yield %>
+</div>
+
+</body>
+</html>

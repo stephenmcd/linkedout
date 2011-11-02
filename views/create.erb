@@ -1,56 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-
-<meta charset="utf-8">
-<title>Create Resume - LinkedOut</title>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
-<script>
-
-$(function() {
-
-    var profiles = {};
-    var select = $('#profiles');
-
-    $.each(<%== @profiles.to_json %>, function() {
-        if (this.id != 'private') {
-            this.name = this.first_name + ' ' + this.last_name;
-            this.picture_url = this.picture_url || '/img/no_photo.png';
-            select.append($('<option>').val(this.id).text(this.name));
-            profiles[this.id] = this;
-        }
-    });
-
-    var profile = function() {
-        var template = $('#profile-template').tmpl(profiles[this.value]);
-        $('#profile').html(template);
-    };
-
-    select.change(profile).keyup(profile);
-
-    select.val('<%= @profile.id %>').change();
-
-});
-
-</script>
-<style>
-    #profile * {margin:0;}
-    #profile {
-        border:1px solid #ccc; padding:10px; min-height:80px; width:500px;
-        margin-top:10px;
-    }
-    #profile img {float:left; width:80px; height:80px; margin-right:10px;}
-    .button {
-        display:block; cursor:pointer; padding:10px 20px; margin-top:20px;
-        font-weight:bold;
-    }
-</style>
-
-</head>
-<body>
-
-<h1>LinkedOut</h1>
 <p>Choose a profile to create a resume.</p>
 
 <form method="post">
@@ -63,11 +10,8 @@ $(function() {
     </script>
     <div id="profile"></div>
     <p>LinkedIn doesn't allow access to email addresses, so you can optionally
-       add an email address to the resume.</p>
+       add an email address to the resume here.</p>
     <label for="email">Email:</label>
     <input name="email" id="email">
     <input class="button" type="submit" value="Create resume">
 </form>
-
-</body>
-</html>
