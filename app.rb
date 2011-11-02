@@ -34,7 +34,8 @@ end
 # Create the LinkedIn client and profile objects for all routes when
 # authenticated.
 before do
-  @tagline = "LinkedOut lets you export LinkedIn profiles as clean PDF resumes."
+  @tagline = "LinkedOut lets you export LinkedIn profiles for you or any
+              of your connections as clean PDF resumes."
   @client = LinkedIn::Client.new(api_key.token, api_key.secret)
   unless session[:auth].nil?
     @client.authorize_from_access *session[:auth]
