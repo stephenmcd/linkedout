@@ -19,7 +19,7 @@
 <h1><%= @profile.first_name %> <%= @profile.last_name %></h1>
 <p><%= @profile.headline %></p>
 <ul>
-    <% if @resume.email %>
+    <% if exists? @resume.email %>
     <li>Email: <a href="mailto:<%= @resume.email %>"><%= @resume.email %></a></li>
     <% end %>
     <% if @profile.member_url_resources.all %>
@@ -35,13 +35,13 @@
     <% end %>
 </ul>
 
-<% if @profile.summary && !profile.summary.strip.empty? %>
+<% if exists? @profile.summary %>
 <hr>
 <h2>Overview</h2>
 <%== erubis :section, :locals => {:data => @profile.summary} %>
 <% end %>
 
-<% specialties = @profile.specialties && !@profile.specialties.strip.empty? %>
+<% specialties = exists? @profile.specialties %>
 <% if specialties || @profile.skills %>
 <hr>
 <% end %>
@@ -71,7 +71,7 @@
 <% end %>
 <% end %>
 
-<% honors = @profile.honors && !@profile.honors.strip.empty? %>
+<% honors = exists? @profile.honors %>
 <% if @profile.educations.all || honors %>
 <hr>
 <% end %>
@@ -104,6 +104,7 @@
 <% @profile.recommendations_received.all.each do |recommendation| %>
 <cite><%= recommendation.recommendation_text %></cite>
 <p>
+<%= recommendation.recommender %>
     - <b><%= recommendation.recommender.first_name %> <%= recommendation.recommender.last_name %></b>,
     <% case recommendation.recommendation_type.code %>
     <% when "service-provider" %>

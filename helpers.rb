@@ -43,4 +43,9 @@ helpers do
         item.is_current && i == 1 ? "Present" : "#{month} #{year}".strip
     }.reject {|date| date.size == 0}.join(" - ")
   end
+
+  # Shortcut for checking string has a value.
+  def exists?(data)
+    data && !data.strip.empty?
+  end
 end
