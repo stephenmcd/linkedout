@@ -3,11 +3,11 @@ body {
     position:absolute; top:0; right:0; bottom:0; left:0;
 }
 .container {
-    width:450px; background:#fff; padding:30px 40px;
+    width:470px; background:#fff; padding:30px 40px;
     border:1px solid #ccc; border-radius:10px;
 }
 #profile {
-    padding:10px; min-height:82px; margin:20px 0; border:1px dashed #666;
+    padding:10px; min-height:82px; margin:20px 0; border:1px dashed #aaa;
 }
 #profile img {
     float:left; width:80px; height:80px; margin-right:10px;
@@ -17,3 +17,4 @@ h1 {margin-bottom:5px;}
 form {margin-top:20px;}
 label {width:auto; margin-right:10px; text-indent:1px;}
 .btn {margin:20px 5px 0 0;}
+footer {font-size:11px; padding-top:10px; margin-top:40px;}
