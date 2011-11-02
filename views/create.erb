@@ -3,8 +3,7 @@
 <head>
 
 <meta charset="utf-8">
-<title>Linked Out</title>
-<meta name="description" content="Convert LinkedIn profiles into beautiful PDF resumes.">
+<title>LinkedOut</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 <script>
@@ -23,10 +22,12 @@ $(function() {
         }
     });
 
-    select.change(function() {
+    var profile = function() {
         var template = $('#profile-template').tmpl(profiles[this.value]);
         $('#profile').html(template);
-    });
+    };
+
+    select.change(profile).keyup(profile);
 
     select.val('<%= @profile.id %>').change();
 
@@ -34,25 +35,38 @@ $(function() {
 
 </script>
 <style>
-    #profiles, #profile {margin:10px;}
     #profile * {margin:0;}
+    #profile {
+        border:1px solid #ccc; padding:10px; min-height:80px; width:500px;
+        margin-top:10px;
+    }
     #profile img {float:left; width:80px; height:80px; margin-right:10px;}
+    .button {
+        display:block; cursor:pointer; padding:10px 20px; margin-top:20px;
+        font-weight:bold;
+    }
 </style>
-</head>
 
+</head>
 <body>
 
+<h1>LinkedOut</h1>
+<p>Choose a profile to create a resume.</p>
+
 <form method="post">
+    <label for="profiles">Profile:</label>
     <select name="id" id="profiles"></select>
     <script id="profile-template" type="text/x-jquery-tmpl">
         <img src="${picture_url}">
-        <h1>${name}</h1>
+        <h2>${name}</h2>
         <p>${headline}</p>
     </script>
     <div id="profile"></div>
+    <p>LinkedIn doesn't allow access to email addresses, so you can optionally
+       add an email address to the resume.</p>
     <label for="email">Email:</label>
     <input name="email" id="email">
-    <input type="submit" value="Create resume">
+    <input class="button" type="submit" value="Create resume">
 </form>
 
 </body>

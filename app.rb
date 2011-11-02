@@ -36,33 +36,33 @@ end
 
 get "/" do
   if session[:auth].nil?
-    args = {:oauth_callback => "#{request.url}callback"}
-    request_token = @client.request_token args
-    session[:request] = request_token.token, request_token.secret
-    redirect @client.request_token.authorize_url
+    erubis :index
   else
-    redirect "/create"
+    @profiles = (@client.connections.all + [@profile]).sort_by {|p|
+      p.first_name.upcase
+    }
+    erubis :create
   end
 end
 
-get "/callback" do
-  token, secret = session[:request]
-  pin = params[:oauth_verifier]
-  session[:auth] = @client.authorize_from_request token, secret, pin
-  redirect "/create"
-end
-
-get "/create" do
-  @profiles = (@client.connections.all + [@profile]).sort_by {|p|
-    p.first_name.upcase
-  }
-  erubis :create
-end
-
-post "/create" do
+post "/" do
   @resume = Resume.first_or_create(:by => @profile.id, :for => params[:id])
   @resume.update(:email => params[:email])
   @profile = @client.profile :id => params[:id], :fields => resume_fields
   attachment @profile.first_name + @profile.last_name + ".pdf"
   PDFKit.new(erubis :resume).to_pdf
+end
+
+get "/login" do
+  if params[:oauth_verifier].nil?
+    args = {:oauth_callback => "#{request.url}"}
+    request_token = @client.request_token args
+    session[:request] = request_token.token, request_token.secret
+    redirect @client.request_token.authorize_url
+  else
+    token, secret = session[:request]
+    pin = params[:oauth_verifier]
+    session[:auth] = @client.authorize_from_request token, secret, pin
+    redirect "/"
+  end
 end
