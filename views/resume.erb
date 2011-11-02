@@ -102,10 +102,10 @@
 <hr>
 <h2>Recommendations</h2>
 <% @profile.recommendations_received.all.each do |recommendation| %>
+<% name = recommendation.recommender.id == "private" ? "Name withheld" : recommendation.recommender.first_name + " " + recommendation.recommender.last_name %>
 <cite><%= recommendation.recommendation_text %></cite>
 <p>
-<%= recommendation.recommender %>
-    - <b><%= recommendation.recommender.first_name %> <%= recommendation.recommender.last_name %></b>,
+    - <b><%= name %></b>,
     <% case recommendation.recommendation_type.code %>
     <% when "service-provider" %>
         was <%= @profile.first_name %>'s client
