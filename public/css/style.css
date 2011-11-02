@@ -13,6 +13,7 @@ body {
     float:left; width:80px; height:80px; margin-right:10px;
     border:1px solid #333;
 }
+p {font-size:16px; margin:10px 0; line-height:24px;}
 h1 {margin-bottom:5px;}
 form {margin-top:20px;}
 label {width:auto; margin-right:10px; text-indent:1px;}
