@@ -17,9 +17,11 @@ resume_fields = %w(first-name last-name headline twitter-accounts
                    summary specialties skills positions educations
                    honors recommendations-received)
 
-# Set up templating, session and LinkedIn API credentials.
+# Set templating to escape HTML.
 set :erubis, :escape_html => true
-enable :sessions
+# Set sessions to expire after two weeks.
+use Rack::Session::Cookie, :expire_after => 60 * 24 * 14
+# Load the LinkedIn API credentials.
 api_key = ApiKey.first
 
 # PDFKit configuration. Use the bundled binary in production (Heroku).
