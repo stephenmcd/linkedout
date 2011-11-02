@@ -1,4 +1,53 @@
-<p>Hey <%= @profile.first_name %>, choose a profile to create a resume.</p>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+<script>
+
+$(function() {
+
+    var profiles = {};
+    var select = $('#profiles');
+
+    // Map the profiles JSON to their IDs for fast lookup and
+    // populate the select list.
+    $.each(<%== @profiles.to_json %>, function() {
+        if (this.id != 'private') {
+            this.name = this.first_name + ' ' + this.last_name;
+            this.picture_url = this.picture_url || '/img/no_photo.png';
+            select.append($('<option>').val(this.id).text(this.name));
+            profiles[this.id] = this;
+        }
+    });
+
+    // Assign any previously specified email addresses.
+    $.each(<%== @emails.to_json %>, function() {
+        profiles[this['for']].email = this.email;
+    });
+
+    // On change of the select list, populate the profile template
+    // and email address field.
+    var profile = function() {
+        var profile = profiles[this.value];
+        var template = $('#profile-template').tmpl(profile);
+        $('#profile').html(template);
+        $('#email').val(profile.email || '');
+    };
+
+    select.change(profile).keyup(profile);
+    select.val('<%= @profile.id %>').change();
+
+    // Store the current email field value against the profile
+    // when focus leaves the email field.
+    $('#email').blur(function() {
+        profiles[select.val()].email = this.value;
+    });
+
+});
+
+</script>
+
+<p class="text">
+    Hey <%= @profile.first_name %>, choose a profile to create
+    a resume.
+</p>
 
 <form method="post">
     <label for="profiles">Profile:</label>
@@ -9,8 +58,10 @@
         <p>${headline}</p>
     </script>
     <div id="profile"></div>
-    <p>LinkedIn doesn't allow access to email addresses, so you can optionally
-       add an email address to the resume here.</p>
+    <p class="text">
+        LinkedIn doesn't allow access to email addresses, so you
+        can optionally add an email address to the resume here.
+    </p>
     <label for="email">Email:</label>
     <input name="email" id="email">
     <br>

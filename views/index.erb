@@ -1,13 +1,13 @@
-<p><%= @tagline %></p>
-<a data-controls-modal="modal-demo" data-backdrop="true">demo</a><br>
+<p class="text"><%= @tagline %></p>
+<a id="screenshot" data-controls-modal="modal-screenshot" data-backdrop="true"><img src="/img/screenshot.png"></a>
+<br>
 <a href="/login" class="btn large primary">Login via LinkedIn</a>
-
-<div id="modal-demo" class="modal hide fade">
+<div id="modal-screenshot" class="modal hide fade">
     <div class="modal-header">
-          <a href="#" class="close">&times;</a>
-          <h3>demo</h3>
+        <a href="#" class="close">&times;</a>
+        <h3>&nbsp;</h3>
     </div>
     <div class="modal-body">
-          <p>img</p>
+        <img src="/img/screenshot.png">
     </div>
 </div>

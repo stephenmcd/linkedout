@@ -1,9 +1,10 @@
 # encoding: UTF-8
+# (for unicode bullets regex that works consistently across Ruby 1.8 and 1.9)
 
 helpers do
   # Splits the given data into sections where each section is either
   # a string paragraph, or a list of bullet points. The near_items
-  # arg are the other items in the same list that the data arg is from
+  # arg is the other items in the same list that the data arg is from
   # and are used to treat the data like bullet points if most of the
   # other items are bullet points.
   def sections(data, near_items)
