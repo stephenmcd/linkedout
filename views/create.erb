@@ -32,7 +32,7 @@ $(function() {
     };
 
     select.change(profile).keyup(profile);
-    select.val('<%= @profile.id %>').change();
+    select.val('<%= @selected %>').change();
 
     // Store the current email field value against the profile
     // when focus leaves the email field.

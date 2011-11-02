@@ -55,6 +55,7 @@ get "/" do
       p.first_name.upcase
     }
     @emails = Resume.all(:by => @profile.id, :email.not => "")
+    @selected = session[:last_profile] || @profile.id
     erubis :create
   end
 end
@@ -65,6 +66,7 @@ post "/" do
   @resume.update(:email => params[:email])
   @profile = @client.profile :id => params[:id], :fields => resume_fields
   attachment "#{@profile.first_name}-#{@profile.last_name}.pdf"
+  session[:last_profile] = params[:id]
   PDFKit.new(erubis :resume, :layout => false).to_pdf
 end
 
