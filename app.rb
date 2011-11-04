@@ -65,7 +65,7 @@ post "/" do
   @resume = Resume.first_or_create(:by => @profile.id, :for => params[:id])
   @resume.update(:email => params[:email])
   @profile = @client.profile :id => params[:id], :fields => resume_fields
-  attachment "#{@profile.first_name}-#{@profile.last_name}.pdf"
+  attachment "#{@profile.first_name}-#{@profile.last_name}-Resume.pdf"
   session[:last_profile] = params[:id]
   PDFKit.new(erubis :resume, :layout => false).to_pdf
 end
