@@ -15,6 +15,11 @@ body {
 }
 
 h1 {margin-bottom:5px;}
+.out {
+    font-size:inherit !important; line-height:33px !important;
+    padding:0 6px 0 3px !important; margin:0 0 0 3px !important;
+    cursor:inherit !important;
+}
 h2 {margin:0 0 8px 0; line-height:20px; font-size:24px;}
 p {margin-bottom:0;}
 p.text {font-size:16px; margin:10px 0; line-height:24px;}
