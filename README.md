@@ -1,6 +1,8 @@
 LinkedOut
 =========
 
+Created by [Stephen McDonald](http://twitter.com/stephen_mcd)
+
 [LinkedOut][1] lets you export [LinkedIn][2] profiles for you
 or any of your connections as clean PDF resumes. Simply go to
 <http://linkedout.jupo.org> and login via your LinkedIn account.
